@@ -1,0 +1,7 @@
+Week 1: Frame
+Week 2: Ballast Subsystem
+Week 3: Tether and Junction Box
+Week 4: Thrusters
+Week 5: Underwater camera, sensors, etc.
+Week 6: Control Box
+10/31/2026 - Comp rules released
