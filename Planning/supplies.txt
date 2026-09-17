@@ -12,9 +12,8 @@ For Step 6
 - 3D design 4" x 6" x 2" box
 - 5 RCA plugs (from friedel) and RCA sockets and RCA bulkhead jacks (plugs)
 - 3/8 inch x 50 feet Polypropylene Hollow Braided Rope (https://www.walmart.com/ip/3-8-50-ROPE/15893301064)
-- 3/8" fid (thing to wire into braided rope)
-For Step 9
-- 3 x dpdt switches
+- 3/8" fid (thing to wire into braided rope) or chopsticks
+For Step 9 (junction box)
 - 2 x arduino motor drivers
 - arduino
 - 10 ft x 16 gauge lamp cord or equivalent power cord for 12V 
