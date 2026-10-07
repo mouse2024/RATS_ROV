@@ -1,7 +1,7 @@
 ## Electronics on Robot
 - Motors
 - Pixhawk
-- Raspberry Pi
+- Raspberry Pi (BlueOS)
 - ESCs
 - Camera
 - Light
