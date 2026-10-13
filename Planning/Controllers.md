@@ -8,4 +8,6 @@
 - On/off switch
 - Button/switch (arm open/closed, light on/off)
 - Extra buttons/switches
-- 
+
+#### Parts
+- (Joystick)[https://www.digikey.com/en/products/detail/sparkfun-electronics/09032/6823623]
