@@ -10,4 +10,4 @@
 - Extra buttons/switches
 
 #### Parts
-- (Joystick)[https://www.digikey.com/en/products/detail/sparkfun-electronics/09032/6823623]
+- [Joystick](https://www.digikey.com/en/products/detail/sparkfun-electronics/09032/6823623)
