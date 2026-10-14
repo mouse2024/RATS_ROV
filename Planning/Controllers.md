@@ -11,3 +11,7 @@
 
 #### Parts
 - [Joystick](https://www.digikey.com/en/products/detail/sparkfun-electronics/09032/6823623)
+
+
+
+https://www.seascapesubsea.com/product/rov-hand-controller/
