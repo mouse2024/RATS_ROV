@@ -2,7 +2,7 @@
 
 ## Communication Pipeline Options
 <div align="center">
-    <img src="CommunicationPipeline.png" width="1200">
+    <img src="CommunicationPipeline.png" width="1000">
 </div>
 
 #### Current Pipeline choice
@@ -16,9 +16,9 @@
 
 ## Communication Pipeline Comparisons
 
-| **ROS topic** <br> <span style="font-weight:normal"> (code on ROV) </span> | **Python VGamepad** | **Python Mavlink** <br> <span style="font-weight:normal"> (code on PC) </span> |
+| **ROS topic** | **Python VGamepad** | **Python Mavlink** |
 | --- | --- | --- |
-| <ul><li>Most of code is running on ROV </li><li> Program your own complex behavior</li></ul>|<ul><li>'Plug and Play'</li><li>Not super customizable</li><li>Need separate pipeline for non-flight controller actions</li></ul>|<ul><li>Program your own complex behavior</li><li>Most of code on PC</li></ul>|
+| <ul><li>Most of code is on ROV </li><li> Program your own complex behavior</li></ul>|<ul><li>'Plug and Play'</li><li>Not super customizable</li><li>Need separate pipeline for non-flight controller actions</li></ul>|<ul><li>Most of code is on PC</li><li>Program your own complex behavior</li></ul>|
 
 ## Software Schedule
 **Phase 1**
