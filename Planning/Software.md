@@ -16,7 +16,7 @@
 
 ## Communication Pipeline Comparisons
 
-| **ROS topic** <br> <span style="font-weight:normal"> (code on ROV) <\span> | **Python VGamepad** | **Python Mavlink** <br> <span style="font-weight:normal"> (code on PC) <\span> |
+| **ROS topic** <br> <span style="font-weight:normal"> (code on ROV) </span> | **Python VGamepad** | **Python Mavlink** <br> <span style="font-weight:normal"> (code on PC) </span> |
 | --- | --- | --- |
 | <ul><li>Most of code is running on ROV </li><li> Program your own complex behavior</li></ul>|<ul><li>'Plug and Play'</li><li>Not super customizable</li><li>Need separate pipeline for non-flight controller actions</li></ul>|<ul><li>Program your own complex behavior</li><li>Most of code on PC</li></ul>|
 
