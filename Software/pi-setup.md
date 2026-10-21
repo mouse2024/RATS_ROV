@@ -3,10 +3,15 @@
 ## Configuration Details
 
 USER: `rat`
+
 PASS: `rat`
+
 HOSTNAME: `blueos`
+
 CONNECTION STRING: `rat@blueos.local`
+
 DEFAULT IP: `192.168.2.2/24`
+
 BLUEOS WEB URL: `http://blueos-avahi.local/` (or substitute the IP for hostname)
 
 
