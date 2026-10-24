@@ -27,6 +27,7 @@ int lowSpeed = .025;
 int midSpeed = 0.5;
 int highSpeed = 1;
 int currentSpeed = 0;
+int speed = 0;
 
 #define DEBOUNCE_DELAY 100
 unsigned long lastDebounceTime = 0;
@@ -36,7 +37,7 @@ struct button {
 };
 
 struct analog {
-	short x, y;
+	int x, y;
 };
 
 const uint32_t happy[] = {
@@ -57,9 +58,9 @@ void setup() {
 	pinMode(SPEED_3, INPUT_PULLUP);
 
 
-  attachInterrupt(digitalPinToInterrupt(SPEED_1), buttonInterrupt, RISING);
-  attachInterrupt(digitalPinToInterrupt(SPEED_2), buttonInterrupt, RISING);
-  attachInterrupt(digitalPinToInterrupt(SPEED_3), buttonInterrupt, RISING);
+	attachInterrupt(digitalPinToInterrupt(SPEED_1), buttonInterrupt, RISING);
+	attachInterrupt(digitalPinToInterrupt(SPEED_2), buttonInterrupt, RISING);
+	attachInterrupt(digitalPinToInterrupt(SPEED_3), buttonInterrupt, RISING);
 
 	Serial.begin(115200);
 
@@ -76,11 +77,13 @@ void loop() {
 	joyX.y = readAnalogAxisLevel(JOY_X_Y) - ANALOG_Y_CORRECTION - joyXerror;
 	joyY.y = readAnalogAxisLevel(JOY_Y_Y) - ANALOG_Y_CORRECTION - joyYerror;
 
+	speed = joyX.y / 255 / currentSpeed;
 
 	Serial.print("Forward/Back:");
 	Serial.print(joyX.y);
 	Serial.print("\t Left/Right: ");
 	Serial.println(joyY.y);
+	Serial.println(speed);
 
 	if (joyX.y > 0) {
 		matrix.loadFrame(happy);
@@ -95,16 +98,16 @@ byte readAnalogAxisLevel(int pin) {
 
 
 void buttonInterrupt() {
-  if (millis() - lastDebounceTime > DEBOUNCE_DELAY) {
-    if (digitalRead(SPEED_1) == 1 && digitalRead(SPEED_2) == 0 && digitalRead(SPEED_3) == 0) {
-      currentSpeed = lowSpeed;
-    }
-    if (digitalRead(SPEED_2) == 1 && digitalRead(SPEED_1) == 0 && digitalRead(SPEED_3) == 0) {
-      currentSpeed = midSpeed;
-    }
+	if (millis() - lastDebounceTime > DEBOUNCE_DELAY) {
+		if (digitalRead(SPEED_1) == 1 && digitalRead(SPEED_2) == 0 && digitalRead(SPEED_3) == 0) {
+			currentSpeed = lowSpeed;
+		}
+		if (digitalRead(SPEED_2) == 1 && digitalRead(SPEED_1) == 0 && digitalRead(SPEED_3) == 0) {
+			currentSpeed = midSpeed;
+		}
 		if (digitalRead(SPEED_3) == 1 && digitalRead(SPEED_1) == 0 && digitalRead(SPEED_2) == 0) {
 			currentSpeed = highSpeed;
 		}
-    lastDebounceTime = millis();
-  }
+		lastDebounceTime = millis();
+	}
 }
