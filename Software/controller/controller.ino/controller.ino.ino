@@ -6,11 +6,10 @@ ArduinoLEDMatrix matrix;
 // Joy Stick X-axis
 #define JOY_X_X A5
 #define JOY_X_Y A4
-#define JOY_X_BUTTON 2
+
 // Joy Stick Y-axis
 #define JOY_Y_X A3
 #define JOY_Y_Y A2
-#define JOY_Y_BUTTON 3
 
 //Default values when axis not actioned
 #define ANALOG_X_CORRECTION 128
@@ -19,14 +18,25 @@ ArduinoLEDMatrix matrix;
 int joyXerror;
 int joyYerror;
 
+// Speed Buttons
+#define SPEED_1 1
+#define SPEED_2 2
+#define SPEED_3 3
+
+int lowSpeed = .025;
+int midSpeed = 0.5;
+int highSpeed = 1;
+int currentSpeed = 0;
+
+#define DEBOUNCE_DELAY 100
+unsigned long lastDebounceTime = 0;
+
 struct button {
 	byte pressed = 0;
 };
 
 struct analog {
 	short x, y;
-
-	button buttonA;
 };
 
 const uint32_t happy[] = {
@@ -42,8 +52,14 @@ const uint32_t heart[] = {
 
 
 void setup() {
-	pinMode(JOY_X_BUTTON, INPUT_PULLUP);
-	pinMode(JOY_Y_BUTTON, INPUT_PULLUP);
+	pinMode(SPEED_1, INPUT_PULLUP);
+	pinMode(SPEED_2, INPUT_PULLUP);
+	pinMode(SPEED_3, INPUT_PULLUP);
+
+
+  attachInterrupt(digitalPinToInterrupt(SPEED_1), buttonInterrupt, RISING);
+  attachInterrupt(digitalPinToInterrupt(SPEED_2), buttonInterrupt, RISING);
+  attachInterrupt(digitalPinToInterrupt(SPEED_3), buttonInterrupt, RISING);
 
 	Serial.begin(115200);
 
@@ -58,33 +74,37 @@ void loop() {
 	analog joyY;
 
 	joyX.y = readAnalogAxisLevel(JOY_X_Y) - ANALOG_Y_CORRECTION - joyXerror;
-	//joyX.buttonA.pressed = isAnalogButtonPressed(JOY_X_BUTTON);
 	joyY.y = readAnalogAxisLevel(JOY_Y_Y) - ANALOG_Y_CORRECTION - joyYerror;
 
 
 	Serial.print("Forward/Back:");
 	Serial.print(joyX.y);
 	Serial.print("\t Left/Right: ");
-	Serial.print(joyY.y);
+	Serial.println(joyY.y);
 
 	if (joyX.y > 0) {
 		matrix.loadFrame(happy);
 	} else if (joyX.y < 0) {
 		matrix.loadFrame(heart);
 	}
-
-	//  if (joyX.buttonA.pressed) {
-	//    Serial.println("X-Axis pressed");
-	//  } else {
-	//    Serial.println("Button not pressed");
-	//  }
 }
 
 byte readAnalogAxisLevel(int pin) {
 	return map(analogRead(pin), 0, 1023, 0, 255);
 }
 
-// bool isAnalogButtonPressed(int pin)
-// {
-// 	 return digitalRead(pin) == 0;
-// }
+
+void buttonInterrupt() {
+  if (millis() - lastDebounceTime > DEBOUNCE_DELAY) {
+    if (digitalRead(SPEED_1) == 1 && digitalRead(SPEED_2) == 0 && digitalRead(SPEED_3) == 0) {
+      currentSpeed = lowSpeed;
+    }
+    if (digitalRead(SPEED_2) == 1 && digitalRead(SPEED_1) == 0 && digitalRead(SPEED_3) == 0) {
+      currentSpeed = midSpeed;
+    }
+		if (digitalRead(SPEED_3) == 1 && digitalRead(SPEED_1) == 0 && digitalRead(SPEED_2) == 0) {
+			currentSpeed = highSpeed;
+		}
+    lastDebounceTime = millis();
+  }
+}
