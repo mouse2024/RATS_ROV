@@ -12,22 +12,22 @@ ArduinoLEDMatrix matrix;
 #define JOY_Y_Y A2
 
 //Default values when axis not actioned
-#define ANALOG_X_CORRECTION 128
-#define ANALOG_Y_CORRECTION 128
+#define ANALOG_X_CORRECTION 128.0
+#define ANALOG_Y_CORRECTION 128.0
 
-int joyXerror;
-int joyYerror;
-
+double joyXerror;
+double joyYerror;
+double joyXmax = 8;
 // Speed Buttons
-#define SPEED_1 1
-#define SPEED_2 2
-#define SPEED_3 3
+#define SPEED_1 2
+#define SPEED_2 3
+#define SPEED_3 4
 
-int lowSpeed = .025;
-int midSpeed = 0.5;
-int highSpeed = 1;
-int currentSpeed = 0;
-int speed = 0;
+double lowSpeed = .25;
+double midSpeed = 0.5;
+double highSpeed = 1;
+double currentSpeed = 0;
+double speed = 0;
 
 #define DEBOUNCE_DELAY 100
 unsigned long lastDebounceTime = 0;
@@ -37,7 +37,7 @@ struct button {
 };
 
 struct analog {
-	int x, y;
+	double x, y;
 };
 
 const uint32_t happy[] = {
@@ -71,13 +71,15 @@ void setup() {
 }
 
 void loop() {
+	currentSpeed = 0.25;
+	double inverse = 1/currentSpeed;
 	analog joyX;
 	analog joyY;
 
 	joyX.y = readAnalogAxisLevel(JOY_X_Y) - ANALOG_Y_CORRECTION - joyXerror;
 	joyY.y = readAnalogAxisLevel(JOY_Y_Y) - ANALOG_Y_CORRECTION - joyYerror;
 
-	speed = joyX.y / 255 / currentSpeed;
+	speed = joyX.y/joyXmax*currentSpeed;
 
 	Serial.print("Forward/Back:");
 	Serial.print(joyX.y);
