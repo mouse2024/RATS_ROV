@@ -20,9 +20,9 @@ double joyYerror;
 double joyXmax = 8;
 
 // Speed Buttons
-#define SPEED_1 2
-#define SPEED_2 3
-#define SPEED_3 4
+#define SPEED_1 8
+#define SPEED_2 9
+#define SPEED_3 10
 
 double lowSpeed = .25;
 double midSpeed = 0.5;
@@ -31,6 +31,7 @@ double currentSpeed = 0;
 double speed = 0;
 
 #define DEBOUNCE_DELAY 100
+unsigned long lastDebounce = 0;
 
 int buttons[3] = { SPEED_1, SPEED_2, SPEED_3 };
 double speeds[3] = { lowSpeed, midSpeed, highSpeed };
@@ -54,14 +55,23 @@ const uint32_t heart[] = {
 	0x100a0040
 };
 
+#define EPO 2
+bool isOFF = false;
 
 void setup() {
+	Serial.begin(115200);
+
+	// Speed Buttons
 	for (int i = 0; i < 3; i++) {
 		pinMode(buttons[i], INPUT_PULLUP);
 	}
 
-	Serial.begin(115200);
+	// EPO
+	pinMode(EPO, INPUT_PULLUP);
+	attachInterrupt(digitalPinToInterrupt(EPO), EPO_Interrupt, RISING);
 
+
+	// Joysticks
 	joyXerror = readAnalogAxisLevel(JOY_X_Y) - ANALOG_Y_CORRECTION;
 	joyYerror = readAnalogAxisLevel(JOY_Y_Y) - ANALOG_Y_CORRECTION;
 
@@ -69,27 +79,29 @@ void setup() {
 }
 
 void loop() {
-	checkSpeed();
+	if (!isOFF) {
+		checkSpeed();
 
-	double inverse = 1 / currentSpeed;
-	analog joyX;
-	analog joyY;
+		double inverse = 1 / currentSpeed;
+		analog joyX;
+		analog joyY;
 
-	joyX.y = readAnalogAxisLevel(JOY_X_Y) - ANALOG_Y_CORRECTION - joyXerror;
-	joyY.y = readAnalogAxisLevel(JOY_Y_Y) - ANALOG_Y_CORRECTION - joyYerror;
+		joyX.y = readAnalogAxisLevel(JOY_X_Y) - ANALOG_Y_CORRECTION - joyXerror;
+		joyY.y = readAnalogAxisLevel(JOY_Y_Y) - ANALOG_Y_CORRECTION - joyYerror;
 
-	speed = joyX.y / joyXmax * currentSpeed;
+		speed = joyX.y / joyXmax * currentSpeed;
 
-	Serial.print("Forward/Back:");
-	Serial.print(joyX.y);
-	Serial.print("\t Left/Right: ");
-	Serial.println(joyY.y);
-	Serial.println(speed);
+		Serial.print("Forward/Back:");
+		Serial.print(joyX.y);
+		Serial.print("\t Left/Right: ");
+		Serial.println(joyY.y);
+		Serial.println(speed);
 
-	if (joyX.y > 0) {
-		matrix.loadFrame(happy);
-	} else if (joyX.y < 0) {
-		matrix.loadFrame(heart);
+		if (joyX.y > 0) {
+			matrix.loadFrame(happy);
+		} else if (joyX.y < 0) {
+			matrix.loadFrame(heart);
+		}
 	}
 }
 
@@ -97,26 +109,33 @@ byte readAnalogAxisLevel(int pin) {
 	return map(analogRead(pin), 0, 1023, 0, 255);
 }
 
-void checkSpeed() {
+void checkSpeed() {  // Cannot do interrupt, because only pins 2 and 3 can take interrupt
 	for (int i = 0; i < 3; i++) {
-    int reading = digitalRead(buttons[i]);
+		int reading = digitalRead(buttons[i]);
 
-    // Reset timer ONLY when the raw reading changes (a transition)
-    if (reading != lastReading[i]) {
-      lastDebounceTime[i] = millis();
-    }
-    lastReading[i] = reading;
+		// Reset timer ONLY when the raw reading changes (a transition)
+		if (reading != lastReading[i]) {
+			lastDebounceTime[i] = millis();
+		}
+		lastReading[i] = reading;
 
-    // Once stable for DEBOUNCE_DELAY, accept the new state
-    if ((millis() - lastDebounceTime[i]) > DEBOUNCE_DELAY) {
-      if (reading != lastState[i]) {
-        lastState[i] = reading;
-        if (reading == LOW) {
-          currentSpeed = speeds[i];
-          Serial.println("New Speed: ");
-          Serial.println(currentSpeed);
-        }
-      }
-    }
-  }
+		// Once stable for DEBOUNCE_DELAY, accept the new state
+		if ((millis() - lastDebounceTime[i]) > DEBOUNCE_DELAY) {
+			if (reading != lastState[i]) {
+				lastState[i] = reading;
+				if (reading == LOW) {
+					currentSpeed = speeds[i];
+					Serial.println("New Speed: ");
+					Serial.println(currentSpeed);
+				}
+			}
+		}
+	}
+}
+
+void EPO_Interrupt() {
+	if (millis() - lastDebounce > DEBOUNCE_DELAY) {
+		isOFF = !isOFF;
+	}
+	lastDebounce = millis();
 }
