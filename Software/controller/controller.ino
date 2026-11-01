@@ -18,6 +18,7 @@ ArduinoLEDMatrix matrix;
 double joyXerror;
 double joyYerror;
 double joyXmax = 8;
+
 // Speed Buttons
 #define SPEED_1 2
 #define SPEED_2 3
@@ -30,11 +31,13 @@ double currentSpeed = 0;
 double speed = 0;
 
 #define DEBOUNCE_DELAY 100
-unsigned long lastDebounceTime = 0;
 
-struct button {
-	byte pressed = 0;
-};
+int buttons[3] = { SPEED_1, SPEED_2, SPEED_3 };
+double speeds[3] = { lowSpeed, midSpeed, highSpeed };
+
+int lastReading[3] = { HIGH, HIGH, HIGH };  // raw pin value last loop
+int lastState[3] = { HIGH, HIGH, HIGH };    // debounced stable state
+unsigned long lastDebounceTime[3] = { 0, 0, 0 };
 
 struct analog {
 	double x, y;
@@ -53,14 +56,9 @@ const uint32_t heart[] = {
 
 
 void setup() {
-	pinMode(SPEED_1, INPUT_PULLUP);
-	pinMode(SPEED_2, INPUT_PULLUP);
-	pinMode(SPEED_3, INPUT_PULLUP);
-
-
-	attachInterrupt(digitalPinToInterrupt(SPEED_1), buttonInterrupt, RISING);
-	attachInterrupt(digitalPinToInterrupt(SPEED_2), buttonInterrupt, RISING);
-	attachInterrupt(digitalPinToInterrupt(SPEED_3), buttonInterrupt, RISING);
+	for (int i = 0; i < 3; i++) {
+		pinMode(buttons[i], INPUT_PULLUP);
+	}
 
 	Serial.begin(115200);
 
@@ -71,15 +69,16 @@ void setup() {
 }
 
 void loop() {
-	currentSpeed = 0.25;
-	double inverse = 1/currentSpeed;
+	checkSpeed();
+
+	double inverse = 1 / currentSpeed;
 	analog joyX;
 	analog joyY;
 
 	joyX.y = readAnalogAxisLevel(JOY_X_Y) - ANALOG_Y_CORRECTION - joyXerror;
 	joyY.y = readAnalogAxisLevel(JOY_Y_Y) - ANALOG_Y_CORRECTION - joyYerror;
 
-	speed = joyX.y/joyXmax*currentSpeed;
+	speed = joyX.y / joyXmax * currentSpeed;
 
 	Serial.print("Forward/Back:");
 	Serial.print(joyX.y);
@@ -98,18 +97,26 @@ byte readAnalogAxisLevel(int pin) {
 	return map(analogRead(pin), 0, 1023, 0, 255);
 }
 
+void checkSpeed() {
+	for (int i = 0; i < 3; i++) {
+    int reading = digitalRead(buttons[i]);
 
-void buttonInterrupt() {
-	if (millis() - lastDebounceTime > DEBOUNCE_DELAY) {
-		if (digitalRead(SPEED_1) == 1 && digitalRead(SPEED_2) == 0 && digitalRead(SPEED_3) == 0) {
-			currentSpeed = lowSpeed;
-		}
-		if (digitalRead(SPEED_2) == 1 && digitalRead(SPEED_1) == 0 && digitalRead(SPEED_3) == 0) {
-			currentSpeed = midSpeed;
-		}
-		if (digitalRead(SPEED_3) == 1 && digitalRead(SPEED_1) == 0 && digitalRead(SPEED_2) == 0) {
-			currentSpeed = highSpeed;
-		}
-		lastDebounceTime = millis();
-	}
+    // Reset timer ONLY when the raw reading changes (a transition)
+    if (reading != lastReading[i]) {
+      lastDebounceTime[i] = millis();
+    }
+    lastReading[i] = reading;
+
+    // Once stable for DEBOUNCE_DELAY, accept the new state
+    if ((millis() - lastDebounceTime[i]) > DEBOUNCE_DELAY) {
+      if (reading != lastState[i]) {
+        lastState[i] = reading;
+        if (reading == LOW) {
+          currentSpeed = speeds[i];
+          Serial.println("New Speed: ");
+          Serial.println(currentSpeed);
+        }
+      }
+    }
+  }
 }
