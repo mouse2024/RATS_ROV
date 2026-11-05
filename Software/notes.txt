@@ -1,0 +1,3 @@
+- add dead zone
+- remove map from readAnalogAxisLevel()
+- same math for turning
