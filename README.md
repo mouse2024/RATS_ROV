@@ -34,7 +34,7 @@ This year, we are competing in the 2027 National Underwater Robotics Competition
 
 ## 🐟 Our Team
 - **Nadia** is a Junior studying electrical engineering with a focus in embedded systems and robotics. She is the team lead on the project.
-- **Samuel** is a Pd.D. student in competer science instrested in research for autonomous systems.
+- **Samuel** is a Ph.D. student in competer science instrested in research for autonomous systems.
 - **Hanok** is a Senior studying electrical engineering with an interest in autonomous systems.
 - **Hannah** is a Senior studying electrical and computer engineering with a focus in robotics and embedded systems.
 - **Ethan** is a Senior in electrical engineering with an interest in robotics and control systems.
