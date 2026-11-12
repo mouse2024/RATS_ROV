@@ -1,5 +1,19 @@
 // Code from: https://projecthub.arduino.cc/hibit/using-joystick-module-with-arduino-0ffdd4
 
+// TODO (no particular order):
+// 1: Implement Left and Right controls
+// 2: Implement Bluetooth connection
+// 3: Implement Up and Down movement
+ 
+// Scope:
+// 1. Claw
+// 2. Lights
+
+// Completed:
+// - selective speeds
+// - Foward and backward controls
+// - EPO
+
 #include "Arduino_LED_Matrix.h"
 ArduinoLEDMatrix matrix;
 
