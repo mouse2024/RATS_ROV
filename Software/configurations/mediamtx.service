@@ -1,0 +1,8 @@
+[Unit]
+After=network-online.target
+Wants=network-online.target
+[Service]
+WorkingDirectory=/usr/local/etc/mediamtx
+ExecStart=/usr/local/bin/mediamtx
+[Install]
+WantedBy=multi-user.target

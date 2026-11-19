@@ -46,17 +46,22 @@ If you don't want to connect host-to-host, you can connect the Pi to a home rout
 
 ## Docker Setup
 
+All blueos-related functionality is handled in the `blueos-core` container.
+
 Helpful commands (run as `sudo`):
 - `docker images` - Show docker images
 - `docker ps` - Show running docker containers
+- `docker logs blueos-core 2>&1 | grep -i -E 'KEYWORD1|KEYWORD2|KEYWORD3'` - View error logs, grep for keywords to narrow down your search (ie. 'mavlink', 'camera')
 
-## ROS2 Docker Container
+### ROS2 Docker Container
 
 See [ros2-guide.md](./ros2-guide.md)
 
-## Troubleshooting
+## Mediamtx / Video stream setup
 
-#### 
+See [camera-setup.md](./camera-setup.md)
+
+## Troubleshooting
 
 #### BlueOS Docker Container 
 

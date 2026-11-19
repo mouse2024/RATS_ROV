@@ -1,0 +1,17 @@
+[Unit]
+Description=Raspberry Pi Camera RTSP Stream
+Requires=mediamtx.service
+After=mediamtx.service
+
+[Service]
+Type=simple
+User=pi
+SupplementaryGroups=video render
+
+ExecStart=/bin/bash -o pipefail -c 'rpicam-vid -t 0 --width 1280 --height 720 --framerate 30 --codec h264 --inline -o - | ffmpeg -f h264 -i - -c:v copy -f rtsp rtsp://127.0.0.1:8554/rpiCamera'
+
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
